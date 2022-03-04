@@ -142,3 +142,8 @@ tags
 data
 video
 configuration.h
+
+# build files
+build/
+install/
+log/
