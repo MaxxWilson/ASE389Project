@@ -13,6 +13,7 @@ class AtlasStatePublisher():
         
     def publish_robot_state(self, robot_state):
         newMsg = JointState()
+        newMsg.header.stamp = self.node.get_clock().now().to_msg()
         joint_pos = robot_state.get("joint_pos")
         joint_vel = robot_state.get("joint_vel")
         
