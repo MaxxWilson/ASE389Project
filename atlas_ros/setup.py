@@ -4,12 +4,14 @@ import glob
 
 package_name = 'atlas_ros'
 
+# Create list of data_file tuples by walking through resource folder (exlucding resource index file)
 urdf_files = []
-for root, directory, file in os.walk(os.getcwd() + "/resource/atlas"):
+for root, directory, file in os.walk(os.getcwd() + "/resource"):
     for f in file:
-        file_rel_path = os.path.join(os.path.relpath(root, os.getcwd()), f)
-        install_dir = "share/" + package_name + "/" + os.path.relpath(root, os.getcwd())
-        urdf_files.append((install_dir, [file_rel_path]))
+        if(f != package_name):
+            file_rel_path = os.path.join(os.path.relpath(root, os.getcwd()), f)
+            install_dir = "share/" + package_name + "/" + os.path.relpath(root, os.getcwd())
+            urdf_files.append((install_dir, [file_rel_path]))
 
 data_files = [
         ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
