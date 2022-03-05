@@ -53,7 +53,7 @@ signal.signal(signal.SIGINT, signal_handler)
 if __name__ == "__main__":
 
     # Environment Setup
-    p.connect(p.GUI)
+    p.connect(p.DIRECT)
     p.resetDebugVisualizerCamera(cameraDistance=1.5,
                                  cameraYaw=120,
                                  cameraPitch=-30,
