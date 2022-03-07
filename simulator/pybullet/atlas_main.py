@@ -74,6 +74,8 @@ if __name__ == "__main__":
                        SimConfig.INITIAL_QUAT_WORLD_TO_BASEJOINT)
 
     p.loadURDF(cwd + "/robot_model/ground/plane.urdf", [0, 0, 0])
+    p.loadURDF(cwd + "/robot_model/ground/boston_box.urdf", [2.0, 0.0, 0.5])
+    
     p.configureDebugVisualizer(p.COV_ENABLE_RENDERING, 1)
     nq, nv, na, joint_id, link_id, pos_basejoint_to_basecom, rot_basejoint_to_basecom = pybullet_util.get_robot_config(
         robot, SimConfig.INITIAL_POS_WORLD_TO_BASEJOINT,

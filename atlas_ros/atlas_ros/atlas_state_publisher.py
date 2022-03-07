@@ -49,7 +49,22 @@ class AtlasStatePublisher():
         tf_stamped_msg.transform.rotation.z = base_com_quat[2]
         tf_stamped_msg.transform.rotation.w = base_com_quat[3]
         
+        # Cube Publish?
+        # Publish world to com transform
+        cube_stamped_msg = TransformStamped()
+        
+        # Set msg time stamp using ros time
+        cube_stamped_msg.header.stamp = self.node.get_clock().now().to_msg()
+        
+        cube_stamped_msg.header.frame_id = "world"
+        cube_stamped_msg.child_frame_id = "cube_center"
+        cube_stamped_msg.transform.translation.x = 2.0
+        cube_stamped_msg.transform.translation.y = 0.0
+        cube_stamped_msg.transform.translation.z = 0.5
+        
+        # Publish all TF Frames
         tf_msg = TFMessage()
+        tf_msg.transforms.append(cube_stamped_msg)
         tf_msg.transforms.append(tf_stamped_msg)
         
         self.transform_pub.publish(tf_msg)
