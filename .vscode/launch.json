@@ -4,14 +4,25 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
         {
-            "name": "Project",
+            "name": "Atlas Main",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/simulator/pybullet/atlas_main.py",
             "console": "integratedTerminal",
             "python": "${env:HOME}/anaconda3/envs/pypnc/bin/python",
             "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "Atlas Symbolic FK",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/atlas_ros/atlas_ros/symbolic_forward_kinematics.py",
+            "console": "integratedTerminal",
+            "python": "${env:HOME}/anaconda3/envs/pypnc/bin/python",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": false
         }
     ]
 }
