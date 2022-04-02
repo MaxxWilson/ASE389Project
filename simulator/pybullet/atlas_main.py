@@ -143,7 +143,8 @@ if __name__ == "__main__":
         # Apply Trq
         pybullet_util.set_motor_trq(robot, joint_id, command)
 
-        ros_state_pub.publish_robot_state(sensor_data)
+        ros_state_pub.update_robot_model(sensor_data)
+        ros_state_pub.publish_robot_state()
 
         p.stepSimulation()
 
