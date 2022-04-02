@@ -36,18 +36,18 @@ class AtlasStatePublisher():
         # Set msg time stamp using ros time
         tf_stamped_msg.header.stamp = self.node.get_clock().now().to_msg()
         
-        base_com_pos = robot_state.get("base_com_pos")
-        base_com_quat = robot_state.get("base_com_quat")
+        base_joint_pos = robot_state.get("base_joint_pos")
+        base_joint_quat = robot_state.get("base_joint_quat")
         
         tf_stamped_msg.header.frame_id = "world"
         tf_stamped_msg.child_frame_id = "pelvis"
-        tf_stamped_msg.transform.translation.x = base_com_pos[0]
-        tf_stamped_msg.transform.translation.y = base_com_pos[1]
-        tf_stamped_msg.transform.translation.z = base_com_pos[2]
-        tf_stamped_msg.transform.rotation.x = base_com_quat[0]
-        tf_stamped_msg.transform.rotation.y = base_com_quat[1]
-        tf_stamped_msg.transform.rotation.z = base_com_quat[2]
-        tf_stamped_msg.transform.rotation.w = base_com_quat[3]
+        tf_stamped_msg.transform.translation.x = base_joint_pos[0]
+        tf_stamped_msg.transform.translation.y = base_joint_pos[1]
+        tf_stamped_msg.transform.translation.z = base_joint_pos[2]
+        tf_stamped_msg.transform.rotation.x = base_joint_quat[0]
+        tf_stamped_msg.transform.rotation.y = base_joint_quat[1]
+        tf_stamped_msg.transform.rotation.z = base_joint_quat[2]
+        tf_stamped_msg.transform.rotation.w = base_joint_quat[3]
         
         # Cube Publish?
         # Publish world to com transform
