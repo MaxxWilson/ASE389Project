@@ -221,8 +221,9 @@ if __name__ == "__main__":
     speed_scale = 3
     ros_state_pub = AtlasStatePublisher()
     t = 0
+    offset = 2
     while(1):
-        t = (time.monotonic() - start_time)/speed_scale
+        t = (time.monotonic() - start_time - offset)/speed_scale
 
         robot_state = OrderedDict()
         robot_state["joint_pos"] = OrderedDict()
