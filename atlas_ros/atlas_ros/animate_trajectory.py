@@ -6,7 +6,6 @@ from collections import OrderedDict
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.io
-from sympy import Order
 from ament_index_python import get_package_share_directory
 
 from atlas_ros.atlas_state_publisher import AtlasStatePublisher
