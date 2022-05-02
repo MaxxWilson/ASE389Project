@@ -6,6 +6,7 @@ from collections import OrderedDict
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.io
+from scipy.spatial.transform import Rotation
 from ament_index_python import get_package_share_directory
 
 from atlas_ros.atlas_state_publisher import AtlasStatePublisher
@@ -97,8 +98,9 @@ if __name__ == "__main__":
     c2_offset = c1_offset + 3
     f1_offset = c2_offset + 3
     f2_offset = f1_offset + 3
+    tht_offset = f2_offset + 3
 
-    num_states = f2_offset + 3
+    num_states = tht_offset + 3
 
     offset_lookup = {
         "q_offset": q_offset,
@@ -111,7 +113,8 @@ if __name__ == "__main__":
         "c1_offset": c1_offset,
         "c2_offset": c2_offset,
         "f1_offset": f1_offset,
-        "f2_offset": f2_offset
+        "f2_offset": f2_offset,
+        "tht_offset" : tht_offset,
     }
 
     t_total = output.get("t_total")
@@ -138,15 +141,15 @@ if __name__ == "__main__":
                     spline_segments[offset_index + i, col][2].item(), 
                     spline_segments[offset_index + i, col][3].item()))
 
-                line_arr.append(Line(
-                    line_segments[offset_index + i, col][0].item(),
-                    line_segments[offset_index + i, col][1].item(),
-                ))
+                # line_arr.append(Line(
+                #     line_segments[offset_index + i, col][0].item(),
+                #     line_segments[offset_index + i, col][1].item(),
+                # ))
 
             key = JointNameLookup[i] if (offset == "q_offset") else JointNameLookup[i] +  "_vel"
 
             state_trajectories_cubic[key] = spline_arr
-            state_trajectories_linear[key] = line_arr
+            # state_trajectories_linear[key] = line_arr
         
 
     dirs = ["x", "y", "z"]
@@ -154,8 +157,7 @@ if __name__ == "__main__":
         for i in range(3):
             dir = dirs[i]
             spline_arr = []
-            line_arr = []
-
+            # line_arr = []
             for col in range(num_splines):
                 offset_index = offset_lookup.get(offset)
                 spline_arr.append(Spline(
@@ -165,15 +167,40 @@ if __name__ == "__main__":
                     spline_segments[offset_index + i, col][3].item()
                 ))
 
-                line_arr.append(Line(
-                    line_segments[offset_index + i, col][0].item(),
-                    line_segments[offset_index + i, col][1].item(),
-                ))
+                # line_arr.append(Line(
+                #     line_segments[offset_index + i, col][0].item(),
+                #     line_segments[offset_index + i, col][1].item(),
+                # ))
 
             key = offset[0:-6] + dir
 
             state_trajectories_cubic[key] = spline_arr
-            state_trajectories_linear[key] = line_arr
+            # state_trajectories_linear[key] = line_arr
+
+    dirs = ["x", "y", "z"]
+    for offset in ["tht_offset"]:
+        for i in range(3):
+            dir = dirs[i]
+            spline_arr = []
+            # line_arr = []
+            for col in range(num_splines):
+                offset_index = offset_lookup.get(offset)
+                spline_arr.append(Spline(
+                    spline_segments[offset_index + i, col][0].item(), 
+                    spline_segments[offset_index + i, col][1].item(), 
+                    spline_segments[offset_index + i, col][2].item(), 
+                    spline_segments[offset_index + i, col][3].item()
+                ))
+
+                # line_arr.append(Line(
+                #     line_segments[offset_index + i, col][0].item(),
+                #     line_segments[offset_index + i, col][1].item(),
+                # ))
+
+            key = offset[0:-6] + dir
+
+            state_trajectories_cubic[key] = spline_arr
+            # state_trajectories_linear[key] = line_arr
 
     dirs = ["x", "y", "z"]
     for i in range(3):
@@ -245,7 +272,21 @@ if __name__ == "__main__":
             Interpolator.interpolate(t, state_trajectories_cubic["r_dot_z"])
             ])
 
-        robot_state["base_joint_quat"] = np.array([0, 0, 0, 1])
+        # robot_state["base_joint_quat"] = np.array([0, 0, 0, 1])
+        tht_x = Interpolator.interpolate(t, state_trajectories_cubic["tht_x"])
+        tht_y = Interpolator.interpolate(t, state_trajectories_cubic["tht_y"])
+        tht_z = Interpolator.interpolate(t, state_trajectories_cubic["tht_z"])
+        # Create rotation object from Euler tht
+        rot = Rotation.from_euler('xyz', [tht_x, tht_y, tht_z])
+        #Convert to quaternions and print
+        rot_quat = rot.as_quat()
+
+        robot_state["base_joint_quat"] = np.array([
+            rot_quat[0],
+            rot_quat[1],
+            rot_quat[2],
+            rot_quat[3]
+       ])
 
         robot_state["base_joint_ang_vel"] = np.array([
             Interpolator.interpolate(t, state_trajectories_cubic["r_dot_x"]), 
