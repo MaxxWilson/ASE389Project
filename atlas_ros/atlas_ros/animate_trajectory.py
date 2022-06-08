@@ -2,6 +2,8 @@
 import os
 import time
 from collections import OrderedDict
+from scipy.spatial.transform import Rotation
+from scipy.spatial.transform import Slerp
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -178,31 +180,6 @@ if __name__ == "__main__":
             # state_trajectories_linear[key] = line_arr
 
     dirs = ["x", "y", "z"]
-    for offset in ["tht_offset"]:
-        for i in range(3):
-            dir = dirs[i]
-            spline_arr = []
-            # line_arr = []
-            for col in range(num_splines):
-                offset_index = offset_lookup.get(offset)
-                spline_arr.append(Spline(
-                    spline_segments[offset_index + i, col][0].item(), 
-                    spline_segments[offset_index + i, col][1].item(), 
-                    spline_segments[offset_index + i, col][2].item(), 
-                    spline_segments[offset_index + i, col][3].item()
-                ))
-
-                # line_arr.append(Line(
-                #     line_segments[offset_index + i, col][0].item(),
-                #     line_segments[offset_index + i, col][1].item(),
-                # ))
-
-            key = offset[0:-6] + dir
-
-            state_trajectories_cubic[key] = spline_arr
-            # state_trajectories_linear[key] = line_arr
-
-    dirs = ["x", "y", "z"]
     for i in range(3):
         dir = dirs[i]
         spline_arr = []
@@ -233,6 +210,8 @@ if __name__ == "__main__":
     for i in range(len(t_knot)):
         knots[0, i] = Interpolator.interpolate(t_knot[i], state_trajectories_cubic["pelvis_pos_x"])
 
+    pelvis_transforms = output.get("Pelvis_orientation_H")
+
     # plt.figure()
     # plt.plot(t_cont, cubic_approx[0, :])
     # plt.plot(t_cont, linear_approx[0, :], linestyle='--')
@@ -245,7 +224,7 @@ if __name__ == "__main__":
 
     start_time = time.monotonic()
     dt = 1/40
-    speed_scale = 3
+    speed_scale = 1
     ros_state_pub = AtlasStatePublisher()
     t = 0
     offset = 2
@@ -260,12 +239,6 @@ if __name__ == "__main__":
             robot_state["joint_pos"][q_name] = Interpolator.interpolate(t, state_trajectories_cubic[q_name])
             robot_state["joint_vel"][q_name] = Interpolator.interpolate(t, state_trajectories_cubic[q_name + "_vel"])
 
-        robot_state["base_joint_pos"] = np.array([
-            Interpolator.interpolate(t, state_trajectories_cubic["pelvis_pos_x"]), 
-            Interpolator.interpolate(t, state_trajectories_cubic["pelvis_pos_y"]), 
-            Interpolator.interpolate(t, state_trajectories_cubic["pelvis_pos_z"])
-            ])
-
         robot_state["base_joint_lin_vel"] = np.array([
             Interpolator.interpolate(t, state_trajectories_cubic["r_dot_x"]), 
             Interpolator.interpolate(t, state_trajectories_cubic["r_dot_y"]), 
@@ -273,19 +246,39 @@ if __name__ == "__main__":
             ])
 
         # robot_state["base_joint_quat"] = np.array([0, 0, 0, 1])
-        tht_x = Interpolator.interpolate(t, state_trajectories_cubic["tht_x"])
-        tht_y = Interpolator.interpolate(t, state_trajectories_cubic["tht_y"])
-        tht_z = Interpolator.interpolate(t, state_trajectories_cubic["tht_z"])
+        #tht_x = Interpolator.interpolate(t, state_trajectories_cubic["tht_x"])
+        #tht_y = Interpolator.interpolate(t, state_trajectories_cubic["tht_y"])
+        #tht_z = Interpolator.interpolate(t, state_trajectories_cubic["tht_z"])
+        
         # Create rotation object from Euler tht
-        rot = Rotation.from_euler('xyz', [tht_x, tht_y, tht_z])
+        #rot = Rotation.from_euler('XYZ', [tht_x, tht_y, tht_z])
+        
         #Convert to quaternions and print
-        rot_quat = rot.as_quat()
+        #rot_quat = rot.as_quat()
+
+        # Get Orientation as interpolated quaternion
+        tq = np.min([np.max([t, 0]).item(), t_total.item()]).item()
+        index = int(np.min([np.floor((tq - np.remainder(tq, timestep))/timestep + 0.0001).item(), len(state_trajectories_cubic["pelvis_pos_x"]) - 1]).item())
+        i1 = min(index, len(state_trajectories_cubic["pelvis_pos_x"]) - 1)
+        i2 = min(index + 1, len(state_trajectories_cubic["pelvis_pos_x"]))
+        
+        # R = Rotation.from_matrix([pelvis_transforms[0:3, 4*i1:4*i1+3], pelvis_transforms[0:3, 4*i2:4*i2+3]])
+        # s = Slerp([round(i1*timestep.item(), 1), round(i2*timestep.item(), 1)], R)
+        # q = s(tq).as_quat()
+        #print(pelvis_transforms[0:3, 4*i1:4*i1+3])
+        #print(R[1].as_matrix())
+
+        robot_state["base_joint_pos"] = np.array([
+            Interpolator.interpolate(t, state_trajectories_cubic["pelvis_pos_x"]), 
+            Interpolator.interpolate(t, state_trajectories_cubic["pelvis_pos_y"]), 
+            Interpolator.interpolate(t, state_trajectories_cubic["pelvis_pos_z"])
+            ])
 
         robot_state["base_joint_quat"] = np.array([
-            rot_quat[0],
-            rot_quat[1],
-            rot_quat[2],
-            rot_quat[3]
+            0,
+            0,
+            0,
+            1
        ])
 
         robot_state["base_joint_ang_vel"] = np.array([
