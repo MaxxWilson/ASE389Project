@@ -1,26 +1,43 @@
-from this import d
+import os
+import sys
+
+cwd = os.getcwd()
+sys.path.append(cwd)
+
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import JointState
+from collections import OrderedDict
 
 import pinocchio as pin
 
+from pnc.robot_system.pinocchio_robot_system import PinocchioRobotSystem
+
 class InteractiveRVIZWrapper(Node):
-    def __init___(self) -> None:
-        super().__init__("interactive_rviz_wrapper")
+    def __init__(self, name, robot):
+        super().__init__(name)
 
-        self.joint_state_subscriber = self.create_subscription(JointState, "/joint_state", self.joint_state_callback, 10)
+        self._robot = robot
 
-    def joint_state_callback(msg: JointState) -> None:
+        self.joint_state_subscriber = self.create_subscription(
+            JointState,
+            "/joint_states",
+            self.joint_state_callback,
+            10)
+
+    def joint_state_callback(self, msg):
         print(20 * "-")
-        for i in range(msg.name):
+        for i in range(len(msg.name)):
             print("Name: " + str(msg.name[i]))
             print("Position: " + str(msg.position[i]))
             print()
 
 def main(args=None):
     rclpy.init(args=args)
-    node = InteractiveRVIZWrapper()
+    robot = PinocchioRobotSystem(
+                cwd + "/robot_model/atlas/atlas.urdf",
+                cwd + "/robot_model/atlas", False)
+    node = InteractiveRVIZWrapper("interactive_rviz_wrapper", robot)
     rclpy.spin(node)
     rclpy.shutdown()
 

@@ -15,12 +15,12 @@
             "cwd": "${workspaceFolder}"
         },
         {
-            "name": "Atlas Symbolic FK",
+            "name": "Interactive RVIZ Wrapper",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/atlas_ros/atlas_ros/symbolic_forward_kinematics.py",
+            "program": "${workspaceFolder}/atlas_ros/atlas_ros/interactive_rviz_wrapper.py",
             "console": "integratedTerminal",
-            "python": "${env:HOME}/anaconda3/envs/pypnc/bin/python",
+            "python": "${env:HOME}/anaconda3/envs/pypnc/bin/python3",
             "cwd": "${workspaceFolder}",
             "justMyCode": false
         }

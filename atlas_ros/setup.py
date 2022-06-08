@@ -36,7 +36,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            "interactive_rviz_wrapper",
+            "interactive_rviz_wrapper = atlas_ros.interactive_rviz_wrapper:main",
             ""
         ],
     },
