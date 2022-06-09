@@ -8,6 +8,7 @@ Panels:
         - /Status1
         - /RobotModel1/Links1
         - /TF1
+        - /Marker
       Splitter Ratio: 0.5
     Tree Height: 557
 Visualization Manager:
@@ -16,10 +17,10 @@ Visualization Manager:
     - Alpha: 0.5
       Cell Size: 1
       Class: rviz_default_plugins/Grid
-      Color: 160; 160; 164
-      Enabled: false
+      Color: 255; 255; 255
+      Enabled: true
       Name: Grid
-    - Alpha: 0.6
+    - Alpha: 0.2
       Class: rviz_default_plugins/RobotModel
       Description Topic:
         Depth: 5
@@ -37,9 +38,19 @@ Visualization Manager:
       Show Arrows: true
       Show Axes: true
       Show Names: true
+    - Alpha: 1.0
+      Class: rviz_default_plugins/MarkerArray
+      Topic: 
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /atlas_markers
+      Name: Markers
+      Enabled: true
   Enabled: true
   Global Options:
-    Background Color: 48; 48; 48
+    Background Color: 200; 200; 200
     Fixed Frame: pelvis
     Frame Rate: 30
   Name: root

@@ -9,7 +9,7 @@ from ament_index_python import get_package_share_directory
 def generate_launch_description():
     pkg_share = get_package_share_directory("atlas_ros")
     atlas_model_path = os.path.join(pkg_share, "resource/atlas/atlas.urdf")
-    default_rviz_config_path = os.path.join(pkg_share, 'rviz/atlas_config_pelvis.rviz')
+    default_rviz_config_path = os.path.join(pkg_share, 'rviz/atlas_config_interaction.rviz')
 
     atlas_robot_joint_publisher_node = launch_ros.actions.Node(
         name="atlas_robot_joint_publisher",
@@ -45,6 +45,6 @@ def generate_launch_description():
                                             description='Absolute path to rviz config file'),
         atlas_robot_state_publisher_node,
         atlas_robot_joint_publisher_gui_node,
-        atlas_robot_joint_publisher_node,
+        # atlas_robot_joint_publisher_node,
         rviz_node
     ])

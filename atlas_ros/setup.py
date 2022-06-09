@@ -19,7 +19,7 @@ data_files = [
         (os.path.join('share', package_name, 'launch'), ["launch/display.launch.py"]),
         (os.path.join('share', package_name, 'launch'), ["launch/interact.launch.py"]),
         (os.path.join('share', package_name, 'rviz'), ["rviz/atlas_config.rviz"]),
-        (os.path.join('share', package_name, 'rviz'), ["rviz/atlas_config_pelvis.rviz"])
+        (os.path.join('share', package_name, 'rviz'), ["rviz/atlas_config_interaction.rviz"])
     ] + urdf_files
 
 setup(
