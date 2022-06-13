@@ -181,7 +181,8 @@ def try_multiprocess(args_list, num_cpu, f, max_timeouts=1):
 
     return results
 
-def prevent_quat_jump(quat_des,quat_act):
+
+def prevent_quat_jump(quat_des, quat_act):
     # print("quat_des:",quat_des)
     # print("quat_act:",quat_act)
     a = quat_des - quat_act
@@ -193,3 +194,78 @@ def prevent_quat_jump(quat_des,quat_act):
 
     return new_quat_act
 
+
+def is_colliding_3d(start, goal, min, max, threshold, N):
+    for i in range(3):
+        for j in range(N):
+            p = start[i] + (goal[i] - start[i]) * j / N
+            if min[i] + np.abs(threshold[i]) <= p and p <= max[i] - np.abs(
+                    threshold[i]):
+                return True
+    return False
+
+
+class GridLocation(object):
+    def __init__(self, delta):
+        """
+        Parameters
+        ----------
+        delta (np.array): 1d array
+        """
+        self._dim = delta.shape[0]
+        self._delta = np.copy(delta)
+
+    def get_grid_idx(self, pos):
+        """
+        Parameters
+        ----------
+        pos (np.array): 1d array
+
+        Returns
+        -------
+        v (double or tuple): idx
+        """
+        v = np.zeros(self._dim, dtype=int)
+        for i in range(self._dim):
+            v[i] = pos[i] // self._delta[i]
+
+        if self._dim == 1:
+            return v[0]
+        else:
+            return tuple(v)
+
+    def get_boundaries(self, idx):
+        """
+        Parameters
+        ----------
+        idx (np.array): 1d array of integer
+
+        Returns
+        -------
+        v (np.array): 1d array of boundaries [min, max, min, max]
+        """
+
+        bds = np.zeros(self._dim * 2, dtype=float)
+        for i in range(self._dim):
+            bds[2 * i] = idx[i] * self._delta[i]
+            bds[2 * i + 1] = (idx[i] + 1) * self._delta[i]
+
+        return bds
+
+    def get_center(self, idx):
+        """
+        Parameters
+        ----------
+        idx (np.array): 1d array of integer
+
+        Returns
+        -------
+        c (np.array): center
+        """
+
+        if self._dim == 1:
+            bds = self.get_boundaries(idx)
+            return (bds[0] + bds[1]) / 2.
+        else:
+            bds = self.get_boundaries(idx)
+            return np.array([(bds[0] + bds[1]) / 2., (bds[2] + bds[3]) / 2.])
