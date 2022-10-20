@@ -145,5 +145,6 @@ configuration.h
 
 # build files
 build/
+build_towr/
 install/
 log/

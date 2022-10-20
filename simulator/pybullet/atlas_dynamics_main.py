@@ -165,7 +165,7 @@ if __name__ == "__main__":
             print("ctrl computation time: ", end_time - start_time)
 
         # Apply Trq
-        pybullet_util.set_motor_trq(robot, joint_id, command['joint_trq'])
+        pybullet_util.set_motor_trq(robot, joint_id, command)
 
         # Save Image
         if (SimConfig.VIDEO_RECORD) and (count % SimConfig.RECORD_FREQ == 0):

@@ -23,6 +23,23 @@
             "python": "${env:HOME}/anaconda3/envs/pypnc/bin/python3",
             "cwd": "${workspaceFolder}",
             "justMyCode": false
+        },
+        {
+            "name": "Debug TOWR+",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build_towr/atlas_forward_walk",
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}",
+            "MIMode": "gdb",
+            "setupCommands": [
+              {
+                "description": "Enable pretty-printing for gdb",
+                "text": "-enable-pretty-printing",
+                "ignoreFailures": true
+              }
+            ],
         }
     ]
 }

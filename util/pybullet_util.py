@@ -206,7 +206,7 @@ def set_motor_impedance_single_pd(robot, joint_id, command, kp, kd):
                                 forces=list(trq_applied.values()))
 
 
-def set_motor_trq(robot, joint_id, trq_cmd):
+def set_motor_trq(robot, joint_id, command):
     trq_applied = OrderedDict()
     for (joint_name, pos_des), (_, vel_des), (_, trq_des) in zip(
             command['joint_pos'].items(), command['joint_vel'].items(),

@@ -18,6 +18,7 @@ endif()
 ###########
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_BUILD_TYPE DEBUG)
+set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -Wextra")
 IF(NOT CMAKE_BUILD_TYPE MATCHES Release)
   message(STATUS "CMAKE_BUILD_TYPE not set to Release -> impacts performance")
 endif()
